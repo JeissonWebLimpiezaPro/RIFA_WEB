@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>🎲 Panel de Administrador - Rifa Web</title>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🎲 Panel de Administrador</h1>
+            <p class="subtitle">Gestión completa de la rifa de dos cifras (00-99)</p>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-indicator offline"></span>
+                <span class="status-text">Conectando...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Dashboard Principal -->
+            <div class="dashboard-section">
+                <h2>📊 Control General</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-icon">👥</div>
+                        <div class="card-content">
+                            <div class="card-value" id="totalParticipants">0</div>
+                            <div class="card-label">Total Participantes</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-content">
+                            <div class="card-value" id="occupiedSlots">0</div>
+                            <div class="card-label">Ocupados</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">📧</div>
+                        <div class="card-content">
+                            <div class="card-value" id="availableSlots">100</div>
+                            <div class="card-label">Disponibles</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">📈</div>
+                        <div class="card-content">
+                            <div class="card-value" id="occupationPercentage">0%</div>
+                            <div class="card-label">Porcentaje Ocupación</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Barra de Progreso -->
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <span>Progreso de ocupación</span>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestión de Participantes -->
+            <div class="participants-management">
+                <div class="section-header">
+                    <h2>👥 Gestión de Participantes</h2>
+                    <div class="header-actions">
+                        <button class="export-btn" id="exportBtn">📄 Exportar PDF</button>
+                        <button class="clear-btn" id="clearAllBtn">🗑️ Limpiar Todo</button>
+                    </div>
+                </div>
+
+                <!-- Búsqueda y Ordenamiento -->
+                <div class="search-section">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre, email o número...">
+                        <button class="clear-search-btn" id="clearSearchBtn" title="Limpiar búsqueda">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="sort-section">
+                        <label for="sortSelect">Ordenar por:</label>
+                        <select id="sortSelect" class="sort-select">
+                            <option value="date-desc" selected>Fecha (más reciente)</option>
+                            <option value="date-asc">Fecha (más antigua)</option>
+                            <option value="name-asc">Nombre (A-Z)</option>
+                            <option value="name-desc">Nombre (Z-A)</option>
+                            <option value="city-asc">Ciudad (A-Z)</option>
+                            <option value="city-desc">Ciudad (Z-A)</option>
+                            <option value="number-asc">Número (0-99)</option>
+                            <option value="number-desc">Número (99-0)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Lista de Participantes -->
+                <div class="participants-grid" id="participantsList">
+                    <!-- Los participantes se cargarán dinámicamente aquí -->
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2025 Rifa Web - Panel de Administrador | Acceso restringido</p>
+        </footer>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirmar Acción</h3>
+            <p id="modalMessage">¿Estás seguro de que quieres realizar esta acción?</p>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancelBtn">Cancelar</button>
+                <button class="confirm-btn" id="confirmBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3>✏️ Editar Participante</h3>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editName">Nombre:</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCity">Ciudad:</label>
+                    <input type="text" id="editCity" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email:</label>
+                    <input type="email" id="editEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Teléfono:</label>
+                    <input type="tel" id="editPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="editNumber">Número:</label>
+                    <input type="number" id="editNumber" min="0" max="99" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelEditBtn">Cancelar</button>
+                    <button type="submit" class="save-btn">💾 Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="../firebase-config.js"></script>
+    <script type="module" src="../firebase-service.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

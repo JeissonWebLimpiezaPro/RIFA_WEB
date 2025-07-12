@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>🎲 Rifa Web - Registro de Participantes</title>
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("sdc01Ubvtaj-UIOaP");
+        })();
+    </script>
+    
+    <!-- Firebase SDK -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="firebase-service.js"></script>
+    
+    <!-- Wompi SDK -->
+    <script src="https://checkout.wompi.co/widget.js"></script>
+    
+    <!-- Payment Service -->
+    <script src="payment-service.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🎲 Rifa Web</h1>
+            <p class="subtitle">¡Registro de participantes para rifa de dos cifras (00-99)!</p>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-indicator offline"></span>
+                <span class="status-text">Conectando...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="participants-section">
+                <h2>👥 Registro de Participantes</h2>
+                
+                <!-- Formulario para Email -->
+                <form class="email-form" id="emailForm">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="participantName">Nombre completo:</label>
+                            <input type="text" id="participantName" name="nombre" placeholder="Ingresa tu nombre" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="participantCity">Ciudad:</label>
+                            <input type="text" id="participantCity" name="ciudad" placeholder="Tu ciudad" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="participantEmail">Correo electrónico:</label>
+                            <input type="email" id="participantEmail" name="email" placeholder="tu@email.com" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="participantPhone">Teléfono:</label>
+                            <input type="tel" id="participantPhone" name="telefono" placeholder="Tu teléfono" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="availableNumbers">Números disponibles:</label>
+                            <select id="availableNumbers" class="available-numbers-select">
+                                <option value="">Selecciona un número disponible</option>
+                            </select>
+                            <label for="participantNumber">Tu número seleccionado:</label>
+                            <input type="number" id="participantNumber" name="numero" min="0" max="99" placeholder="00" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="add-btn" id="submitBtn">
+                        <span class="btn-text">💳 Pagar y Registrar</span>
+                    </button>
+                </form>
+
+                <!-- Sección de Estadísticas de Cupos -->
+                <div class="stats-section">
+                    <h3>📊 Estadísticas de Cupos</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Cupos</div>
+                            <div class="stat-value" id="totalCupos">100</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Ocupados</div>
+                            <div class="stat-value" id="cuposOcupados">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Cupos Disponibles</div>
+                            <div class="stat-value" id="cuposDisponibles">100</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Porcentaje Ocupado</div>
+                            <div class="stat-value" id="porcentajeOcupado">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="participants-list-section">
+                    <div class="section-header">
+                        <h3>📋 Lista de Participantes</h3>
+                        <div class="sort-section">
+                            <label for="sortSelect">Ordenar por:</label>
+                            <select id="sortSelect" class="sort-select">
+                                <option value="date-desc" selected>Fecha (más reciente)</option>
+                                <option value="date-asc">Fecha (más antigua)</option>
+                                <option value="name-asc">Nombre (A-Z)</option>
+                                <option value="name-desc">Nombre (Z-A)</option>
+                                <option value="city-asc">Ciudad (A-Z)</option>
+                                <option value="city-desc">Ciudad (Z-A)</option>
+                                <option value="number-asc">Número (0-99)</option>
+                                <option value="number-desc">Número (99-0)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="participants-list" id="participantsList">
+                        <div class="empty-participants">No hay participantes registrados</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2025 JeissonDev Rifa Web - Sistema de registro de participantes para rifas de dos cifras</p>
+        </footer>
+    </div>
+
+    <!-- Modal de Pago -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content payment-modal">
+            <h3>💳 Método de Pago</h3>
+            <p>Selecciona tu método de pago preferido:</p>
+            
+            <div class="payment-methods">
+                <button class="payment-method-btn" data-method="nequi">
+                    <img src="img/nequi.png" alt="Nequi" class="payment-icon">
+                    <span>Nequi</span>
+                </button>
+                <button class="payment-method-btn" data-method="daviplata">
+                    <img src="img/daviplata.jpg" alt="DaviPlata" class="payment-icon">
+                    <span>DaviPlata</span>
+                </button>
+            </div>
+            
+            <div class="payment-summary">
+                <h4>Resumen del Pago</h4>
+                <div class="summary-item">
+                    <span>Número seleccionado:</span>
+                    <span id="paymentNumber">-</span>
+                </div>
+                <div class="summary-item">
+                    <span>Valor a pagar:</span>
+                    <span class="payment-amount">$10.000 COP</span>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancelPaymentBtn">Cancelar</button>
+                <button class="confirm-btn" id="confirmPaymentBtn">Confirmar Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lógica de la aplicación -->
+    <script src="logica.js"></script>
+</body>
+</html>
