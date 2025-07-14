@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realizar Abono | Rifa Web</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: #f1f5f9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .abono-container {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(30,64,175,0.08);
+      max-width: 420px;
+      width: 98vw;
+      margin: 40px auto;
+      padding: 32px 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: modalFadeIn 0.25s;
+    }
+    .abono-container h2 {
+      color: #2563eb;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    #formAbono {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    #formAbono label {
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+    #formAbono input[type="number"],
+    #formAbono input[type="file"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: #fff;
+      margin-top: 4px;
+      margin-bottom: 2px;
+      transition: border-color 0.2s;
+    }
+    #formAbono input[type="number"]:focus,
+    #formAbono input[type="file"]:focus {
+      border-color: #2563eb;
+      outline: none;
+    }
+    #formAbono button[type="submit"] {
+      background: linear-gradient(90deg, #2563eb 60%, #22d3ee 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+      transition: background 0.2s, transform 0.1s;
+    }
+    #formAbono button[type="submit"]:hover {
+      background: linear-gradient(90deg, #1d4ed8 60%, #06b6d4 100%);
+      transform: translateY(-2px) scale(1.03);
+    }
+    #volverInicioBtn {
+      background: #64748b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 24px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 2px 8px rgba(100,116,139,0.08);
+    }
+    #volverInicioBtn:hover {
+      background: #334155;
+      transform: translateY(-1px) scale(1.04);
+    }
+    .abono-msg {
+      margin-top: 18px;
+      font-size: 1.05rem;
+      color: #059669;
+      text-align: center;
+      display: none;
+    }
+    @media (max-width: 600px) {
+      .abono-container {
+        max-width: 98vw;
+        padding: 18px 4vw 14px 4vw;
+      }
+      .abono-container h2 {
+        font-size: 1.3rem;
+      }
+      #formAbono button[type="submit"], #volverInicioBtn {
+        font-size: 0.98rem;
+        padding: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="abono-container">
+    <h2>Realizar Abono</h2>
+    <form id="formIdentificar" autocomplete="off" style="margin-bottom: 18px;">
+      <div>
+        <label for="identificador">Email, Teléfono o Número de rifa:</label>
+        <input type="text" id="identificador" name="identificador" required placeholder="ej: correo@dominio.com, 3001234567 o 23">
+      </div>
+      <button type="submit">Buscar mis abonos</button>
+    </form>
+    <div id="infoParticipante" style="display:none; width:100%; margin-bottom: 18px; background:#f1f5f9; border-radius:10px; padding:16px 12px;">
+      <h3 style="color:#2563eb; font-size:1.1rem; margin-bottom:10px;">Datos del Participante</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 16px;">
+        <div><strong>Nombre:</strong> <span id="pNombre"></span></div>
+        <div><strong>Email:</strong> <span id="pEmail"></span></div>
+        <div><strong>Teléfono:</strong> <span id="pTelefono"></span></div>
+        <div><strong>Número:</strong> <span id="pNumero"></span></div>
+        <div><strong>Plan de pago:</strong> <span id="pPlan"></span></div>
+        <div><strong>Cuotas pagadas:</strong> <span id="pCuotasPagadas"></span> / <span id="pTotalCuotas"></span></div>
+      </div>
+    </div>
+    <div id="abonosRealizados" style="width:100%; margin-bottom: 24px;"></div>
+    <form id="formAbono" autocomplete="off" style="display:none;">
+      <div>
+        <label for="abonoMonto">Monto del abono:</label>
+        <input type="number" id="abonoMonto" name="abonoMonto" min="1" step="any" required>
+      </div>
+      <div>
+        <label for="abonoRecibo">Subir recibo:</label>
+        <input type="file" id="abonoRecibo" name="abonoRecibo" accept="image/*,application/pdf" required>
+      </div>
+      <button type="submit">Enviar Abono</button>
+    </form>
+    <button type="button" id="volverInicioBtn">Volver al inicio</button>
+    <div class="abono-msg" id="abonoMsg"></div>
+  </div>
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="firebase-service.js"></script>
+  <script type="module" src="abonos.js"></script>
+</body>
+</html> 

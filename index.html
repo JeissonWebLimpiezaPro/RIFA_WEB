@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title id="pageTitle">🎲 Rifa Web - Registro de Participantes</title>
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("KFZ8WsN6aH69H3Gae");
+            console.log('EmailJS inicializado con ID:', "KFZ8WsN6aH69H3Gae");
+        })();
+    </script>
+    
+    <!-- Firebase SDK -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="firebase-service.js"></script>
+    
+    <!-- Payment Service -->
+    <script src="payment-service.js"></script>
+    
+    <!-- Countdown Timer -->
+    <script src="countdown.js"></script>
+    
+    <!-- 
+    CLOUDINARY CONFIGURATION:
+    ✅ Configurado automáticamente con credenciales reales:
+    - Cloud Name: dbvwqrkws
+    - Upload Preset: rifa_receipts
+    - Folder: rifa/receipts
+    
+    Las imágenes se subirán automáticamente a Cloudinary.
+    -->
+</head>
+<body>
+  <div id="mainContent">
+    <div class="container">
+        <header class="header">
+            <h1 class="title" id="rifaTitle">🎲 Rifa Web</h1>
+            <p class="subtitle">¡Registro de participantes para rifa de dos cifras (00-99)!</p>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-indicator offline"></span>
+                <span class="status-text">Conectando...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="participants-section">
+                <h2>👥 Registro de Participantes</h2>
+                
+                <!-- Formulario para Email -->
+                <form class="email-form" id="emailForm">
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="participantName">Nombre completo:</label>
+                            <input type="text" id="participantName" name="nombre" placeholder="Ingresa tu nombre" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="participantCity">Ciudad:</label>
+                            <input type="text" id="participantCity" name="ciudad" placeholder="Tu ciudad" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="participantEmail">Correo electrónico:</label>
+                            <input type="email" id="participantEmail" name="email" placeholder="tu@email.com" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="participantPhone">Teléfono:</label>
+                            <input type="tel" id="participantPhone" name="telefono" placeholder="Tu teléfono" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="availableNumbers" class="available-numbers-label">Números disponibles:</label>
+                            <select id="availableNumbers" class="available-numbers-select">
+                                <option value="">Selecciona un número disponible</option>
+                            </select>
+                            <label for="participantNumber">Tu número seleccionado:</label>
+                            <input type="number" id="participantNumber" name="numero" min="0" max="99" placeholder="00" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de Consentimiento de Privacidad -->
+                    <div class="privacy-consent-toggle">
+                        <div class="privacy-toggle-header">
+                            <button type="button" class="privacy-toggle-btn" id="privacyToggleBtn">
+                                <span class="toggle-icon">🔒</span>
+                                <span class="toggle-text">Aceptar Tratamiento de Datos Personales</span>
+                                <span class="toggle-arrow">▼</span>
+                            </button>
+                            <div class="privacy-master-checkbox">
+                                <input type="checkbox" id="privacyMasterCheckbox" class="master-checkbox">
+                                <label for="privacyMasterCheckbox" class="master-checkbox-label">
+                                    <span class="master-checkbox-text">Aceptar
+                                        
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Sección de Consentimiento de Privacidad (Oculta por defecto) -->
+                        <div class="privacy-consent-section" id="privacyConsentSection" style="display: none;">
+                            <h3>🔒 Consentimiento de Privacidad</h3>
+                            <p class="consent-description">Para continuar con tu registro, debes aceptar el tratamiento de tus datos personales:</p>
+                            
+                            <div class="consent-checkboxes">
+                                <div class="consent-item">
+                                    <input type="checkbox" id="privacyConsent" name="privacyConsent" required>
+                                    <label for="privacyConsent" class="consent-label">
+                                        <span class="consent-text">
+                                            <strong>Acepto el tratamiento de mis datos personales</strong> para la gestión de mi participación en la rifa, envío de notificaciones y comunicación relacionada con el sorteo.
+                                        </span>
+                                    </label>
+                                </div>
+                                
+                                <div class="consent-item">
+                                    <input type="checkbox" id="emailConsent" name="emailConsent" required>
+                                    <label for="emailConsent" class="consent-label">
+                                        <span class="consent-text">
+                                            <strong>Acepto recibir comunicaciones por email</strong> incluyendo confirmaciones de registro, notificaciones sobre el sorteo y resultados.
+                                        </span>
+                                    </label>
+                                </div>
+                                
+                                <div class="consent-item">
+                                    <input type="checkbox" id="termsConsent" name="termsConsent" required>
+                                    <label for="termsConsent" class="consent-label">
+                                        <span class="consent-text">
+                                            <strong>Acepto los términos y condiciones</strong> de participación en la rifa y confirmo que soy mayor de 18 años.
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="privacy-links">
+                                <a href="privacy-policy.html" target="_blank" class="privacy-link">
+                                    📄 Leer Política de Privacidad Completa
+                                </a>
+                                <a href="terms-conditions.html" target="_blank" class="privacy-link">
+                                    📋 Leer Términos y Condiciones
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="add-btn" id="submitBtn">
+                        <span class="btn-text">💳 Pagar y Registrar</span>
+                    </button>
+                    <!-- Botón Hacer Abono: solo visible si el usuario ya está registrado -->
+                    <button type="button" class="abono-btn" id="abrirAbonoBtn" style="margin-top: 12px;">💸 Hacer abono</button>
+                </form>
+
+                <!-- Información del Sorteo -->
+                <div class="sorteo-info-section" id="sorteoInfoSection" style="display: none;">
+                    <h3>🎯 Información del Sorteo</h3>
+                    
+                    <!-- Cuenta Regresiva -->
+                    <div class="countdown-section" id="countdownSection">
+                        <h4>⏰ Cuenta Regresiva</h4>
+                        <div class="countdown-grid">
+                            <div class="countdown-item">
+                                <div class="countdown-number" id="countdownDays">00</div>
+                                <div class="countdown-label">Días</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-number" id="countdownHours">00</div>
+                                <div class="countdown-label">Horas</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-number" id="countdownMinutes">00</div>
+                                <div class="countdown-label">Minutos</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-number" id="countdownSeconds">00</div>
+                                <div class="countdown-label">Segundos</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sorteo-info-grid">
+                        <div class="sorteo-info-card">
+                            <div class="sorteo-icon">📅</div>
+                            <div class="sorteo-content">
+                                <div class="sorteo-label">Fecha del Sorteo</div>
+                                <div class="sorteo-value" id="sorteoDate">Por definir</div>
+                            </div>
+                        </div>
+                        <div class="sorteo-info-card">
+                            <div class="sorteo-icon">🎲</div>
+                            <div class="sorteo-content">
+                                <div class="sorteo-label">Lotería</div>
+                                <div class="sorteo-value" id="sorteoLoteria">Por definir</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Estadísticas de Cupos -->
+                <div class="stats-section">
+                    <h3>📊 Estadísticas de Cupos</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Cupos</div>
+                            <div class="stat-value" id="totalCupos">100</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Ocupados</div>
+                            <div class="stat-value" id="cuposOcupados">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Cupos Disponibles</div>
+                            <div class="stat-value" id="cuposDisponibles">100</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Porcentaje Ocupado</div>
+                            <div class="stat-value" id="porcentajeOcupado">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="participants-list-section">
+                    <div class="section-header">
+                        <h3>📋 Lista de Participantes</h3>
+                        <div class="sort-section">
+                            <label for="sortSelect">Ordenar por:</label>
+                            <select id="sortSelect" class="sort-select">
+                                <option value="date-desc" selected>Fecha (más reciente)</option>
+                                <option value="date-asc">Fecha (más antigua)</option>
+                                <option value="name-asc">Nombre (A-Z)</option>
+                                <option value="name-desc">Nombre (Z-A)</option>
+                                <option value="city-asc">Ciudad (A-Z)</option>
+                                <option value="city-desc">Ciudad (Z-A)</option>
+                                <option value="number-asc">Número (0-99)</option>
+                                <option value="number-desc">Número (99-0)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="participants-list" id="participantsList">
+                        <div class="empty-participants">No hay participantes registrados</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2025 JeissonDev Rifa Web - Sistema de registro de participantes para rifas de dos cifras</p>
+            <div class="footer-links">
+                <a href="privacy-policy.html" target="_blank" class="footer-link">🔒 Política de Privacidad</a>
+                <a href="terms-conditions.html" target="_blank" class="footer-link">📋 Términos y Condiciones</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal de Pago -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content payment-modal">
+            <h3>💳 Pago Manual con Nequi</h3>
+            <p class="rifa-title-modal" id="modalRifaTitle">Rifa Web</p>
+            
+            <!-- Selección de Plan de Pago -->
+            <div class="payment-plan-selection">
+                <h4>📋 Selecciona tu Plan de Pago</h4>
+                <div class="payment-plans-grid">
+                    <div class="payment-plan-card" data-plan="flexible">
+                        <div class="plan-icon">📅</div>
+                        <div class="plan-content">
+                            <h5 class="plan-name">Pago Fraccionado</h5>
+                            <p class="plan-description">Elige cuántas cuotas quieres (1-4)</p>
+                            <div class="plan-amount" id="flexiblePaymentAmount">$5.000 COP x 2</div>
+                        </div>
+                        <div class="plan-checkbox">
+                            <input type="radio" name="paymentPlan" id="planFlexible" value="flexible" checked>
+                            <label for="planFlexible"></label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Selector de Cuotas (solo visible para plan flexible) -->
+                <div class="installments-selector" id="installmentsSelector" style="display: none;">
+                    <h5>🎯 ¿En cuántas cuotas quieres pagar?</h5>
+                    <div class="installments-grid">
+                        <div class="installment-option" data-installments="1">
+                            <div class="installment-number">1</div>
+                            <div class="installment-amount" id="installment1Amount">$10.000 COP</div>
+                            <div class="installment-label">Cuota única</div>
+                        </div>
+                        <div class="installment-option" data-installments="2">
+                            <div class="installment-number">2</div>
+                            <div class="installment-amount" id="installment2Amount">$5.000 COP</div>
+                            <div class="installment-label">Cuotas</div>
+                        </div>
+                        <div class="installment-option" data-installments="3">
+                            <div class="installment-number">3</div>
+                            <div class="installment-amount" id="installment3Amount">$3.333 COP</div>
+                            <div class="installment-label">Cuotas</div>
+                        </div>
+                        <div class="installment-option" data-installments="4">
+                            <div class="installment-number">4</div>
+                            <div class="installment-amount" id="installment4Amount">$2.500 COP</div>
+                            <div class="installment-label">Cuotas</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-instructions-section">
+                <h4>📝 Instrucciones de Pago</h4>
+                <p>Sigue estos pasos para realizar el pago:</p>
+            
+            <div class="payment-instructions">
+                <div class="nequi-info">
+                    <img src="img/nequi.png" alt="Nequi" class="payment-icon">
+                    <div class="nequi-details">
+                        <h4>Número Nequi: <span id="nequiNumber">3001234567</span></h4>
+                        <div class="payment-amount-info">
+                            <p class="current-payment">Monto a transferir: <strong id="paymentAmount">$10.000 COP</strong></p>
+                            <p class="payment-schedule" id="paymentSchedule" style="display: none;">
+                                Próxima cuota: <strong id="nextPaymentAmount">$2.500 COP</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="instructions-list">
+                    <h4>Instrucciones:</h4>
+                    <ol id="paymentInstructions">
+                        <li>Abre tu app de Nequi</li>
+                        <li>Ve a "Enviar" o "Transferir"</li>
+                        <li>Ingresa el número: <strong id="nequiNumberCopy">3001234567</strong></li>
+                        <li>Transfiere: <strong id="paymentAmountCopy">$10.000 COP</strong></li>
+                        <li>Guarda el comprobante</li>
+                        <li>Sube el desprendible aquí abajo</li>
+                        <li>Haz clic en "Confirmar Pago"</li>
+                    </ol>
+                </div>
+                
+                <div class="receipt-upload-section">
+                    <h4>📄 Subir Desprendible</h4>
+                    <p>Adjunta una captura de pantalla o foto del comprobante de pago:</p>
+                    
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">
+                            <span class="upload-title">Subir comprobante</span>
+                            <span class="upload-subtitle">JPG, PNG, PDF (máx. 5MB)</span>
+                        </div>
+                        <input type="file" id="receiptFile" accept="image/*,.pdf" style="display: none;">
+                    </div>
+                    
+                    <div class="file-preview" id="filePreview" style="display: none;">
+                        <div class="preview-header">
+                            <span class="preview-title">Archivo seleccionado:</span>
+                            <button type="button" class="remove-file-btn" id="removeFileBtn">❌</button>
+                        </div>
+                        <div class="preview-content">
+                            <img id="filePreviewImg" alt="Vista previa" style="display: none;">
+                            <div id="filePreviewInfo"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="payment-summary">
+                <h4>Resumen del Pago</h4>
+                <div class="summary-item">
+                    <span>Número seleccionado:</span>
+                    <span id="paymentNumber">-</span>
+                </div>
+                <div class="summary-item">
+                    <span>Plan seleccionado:</span>
+                    <span id="summaryPaymentPlan">Pago Total</span>
+                </div>
+                <div class="summary-item">
+                    <span>Valor total:</span>
+                    <span class="payment-amount" id="summaryTotalAmount">$10.000 COP</span>
+                </div>
+                <div class="summary-item" id="summaryInstallmentInfo" style="display: none;">
+                    <span>Cuota actual:</span>
+                    <span class="payment-amount" id="summaryCurrentAmount">$2.500 COP</span>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancelPaymentBtn">Cancelar</button>
+                <button class="confirm-btn" id="confirmPaymentBtn">Confirmar Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón Hacer Abono (solo visible si el usuario está registrado) -->
+    <!-- Eliminar el contenedor flotante de abonoBtnContainer que estaba fuera del formulario -->
+
+    <!-- Modal de Abonos (Cliente) -->
+    <div class="modal" id="abonoModal">
+        <div class="modal-content abono-modal-content">
+            <h3>💸 Hacer Abono</h3>
+            <div class="abono-participant-info">
+                <p><strong>Nombre:</strong> <span id="abonoNombre"></span></p>
+                <p><strong>Email:</strong> <span id="abonoEmail"></span></p>
+                <p><strong>Teléfono:</strong> <span id="abonoTelefono"></span></p>
+                <p><strong>Número:</strong> <span id="abonoNumero"></span></p>
+                <p><strong>Plan de pago:</strong> <span id="abonoPlan"></span></p>
+                <p><strong>Cuotas pagadas:</strong> <span id="abonoCuotasPagadas"></span> / <span id="abonoTotalCuotas"></span></p>
+            </div>
+            <div class="abono-recibos-section">
+                <h4>Recibos subidos</h4>
+                <ul id="abonoRecibosList">
+                    <!-- Recibos se listarán aquí -->
+                </ul>
+            </div>
+            <div class="abono-upload-section">
+                <label for="abonoReciboFile">Subir nuevo recibo para la cuota actual:</label>
+                <input type="file" id="abonoReciboFile" accept="image/*,application/pdf">
+                <button class="upload-abono-btn" id="uploadAbonoBtn">Subir Recibo</button>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="closeAbonoModalBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+    <!-- Sección de Abonos (inicialmente oculta) -->
+    <section id="seccionAbono" style="display:none; margin-top: 32px;">
+      <h2>Realizar Abono</h2>
+      <form id="formAbono">
+        <div>
+          <label for="abonoMonto">Monto del abono:</label>
+          <input type="number" id="abonoMonto" name="abonoMonto" min="1" required>
+        </div>
+        <div>
+          <label for="abonoRecibo">Subir recibo:</label>
+          <input type="file" id="abonoRecibo" name="abonoRecibo" accept="image/*,application/pdf" required>
+        </div>
+        <button type="submit">Enviar Abono</button>
+      </form>
+      <button type="button" id="volverInicioBtn" style="margin-top: 16px;">Volver al inicio</button>
+    </section>
+  </div>
+
+    <!-- Lógica de la aplicación -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="firebase-service.js"></script>
+    <script type="module" src="logica.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  var abrirAbonoBtn = document.getElementById('abrirAbonoBtn');
+  if (abrirAbonoBtn) {
+    abrirAbonoBtn.addEventListener('click', function() {
+      window.location.href = 'abonos.html';
+    });
+  }
+});
+</script>
+</body>
+</html>

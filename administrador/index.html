@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>🎲 Panel de Administrador - Rifa Web</title>
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init("KFZ8WsN6aH69H3Gae");
+            console.log('EmailJS inicializado en panel admin');
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🎲 Panel de Administrador</h1>
+            <p class="subtitle">Gestión completa de la rifa de dos cifras (00-99)</p>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-indicator offline"></span>
+                <span class="status-text">Conectando...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Dashboard Principal -->
+            <div class="dashboard-section">
+                <h2>📊 Control General</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-icon">👥</div>
+                        <div class="card-content">
+                            <div class="card-value" id="totalParticipants">0</div>
+                            <div class="card-label">Total Participantes</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-content">
+                            <div class="card-value" id="occupiedSlots">0</div>
+                            <div class="card-label">Ocupados</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">📧</div>
+                        <div class="card-content">
+                            <div class="card-value" id="availableSlots">100</div>
+                            <div class="card-label">Disponibles</div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon">📈</div>
+                        <div class="card-content">
+                            <div class="card-value" id="occupationPercentage">0%</div>
+                            <div class="card-label">Porcentaje Ocupación</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Barra de Progreso -->
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <span>Progreso de ocupación</span>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de la Rifa -->
+            <div class="rifa-config-section">
+                <div class="section-header">
+                    <h2>⚙️ Configuración de la Rifa</h2>
+                    <div class="header-actions">
+                        <button class="save-config-btn" id="saveConfigBtn">💾 Guardar Configuración</button>
+                        <button class="delete-config-btn" id="deleteConfigBtn">🗑️ Eliminar Configuración</button>
+                    </div>
+                </div>
+                
+                <div class="config-form">
+                    <div class="config-grid">
+                        <div class="config-item">
+                            <label for="rifaTitle">¿Qué estás rifando?:</label>
+                            <input type="text" id="rifaTitle" placeholder="Ej: iPhone 15, PlayStation 5, etc." maxlength="100">
+                        </div>
+                        <div class="config-item">
+                            <label for="rifaAmount">Monto de la rifa (COP):</label>
+                            <input type="text" id="rifaAmount" placeholder="10.000" pattern="[0-9,.]*">
+                        </div>
+                        <div class="config-item">
+                            <label for="sorteoDate">Fecha del sorteo:</label>
+                            <input type="date" id="sorteoDate">
+                        </div>
+                        <div class="config-item">
+                            <label for="loteria">Lotería para el sorteo:</label>
+                            <select id="loteria">
+                                <option value="">Selecciona una lotería</option>
+                                <option value="Baloto">Baloto</option>
+                                <option value="Lotería de Bogotá">Lotería de Bogotá</option>
+                                <option value="Lotería de Medellín">Lotería de Medellín</option>
+                                <option value="Lotería de Cali">Lotería de Cali</option>
+                                <option value="Lotería de Manizales">Lotería de Manizales</option>
+                                <option value="Lotería de Bucaramanga">Lotería de Bucaramanga</option>
+                                <option value="Lotería de Pereira">Lotería de Pereira</option>
+                                <option value="Lotería de Cundinamarca">Lotería de Cundinamarca</option>
+                                <option value="Lotería de Boyacá">Lotería de Boyacá</option>
+                                <option value="Lotería de Santander">Lotería de Santander</option>
+                                <option value="Lotería de Antioquia">Lotería de Antioquia</option>
+                                <option value="Lotería de Valle">Lotería de Valle</option>
+                                <option value="Lotería de Cauca">Lotería de Cauca</option>
+                                <option value="Lotería de Nariño">Lotería de Nariño</option>
+                                <option value="Lotería de Atlántico">Lotería de Atlántico</option>
+                                <option value="Lotería de Bolívar">Lotería de Bolívar</option>
+                                <option value="Lotería de Magdalena">Lotería de Magdalena</option>
+                                <option value="Lotería de Cesar">Lotería de Cesar</option>
+                                <option value="Lotería de La Guajira">Lotería de La Guajira</option>
+                                <option value="Lotería de Norte de Santander">Lotería de Norte de Santander</option>
+                                <option value="Lotería de Arauca">Lotería de Arauca</option>
+                                <option value="Lotería de Casanare">Lotería de Casanare</option>
+                                <option value="Lotería de Meta">Lotería de Meta</option>
+                                <option value="Lotería de Vichada">Lotería de Vichada</option>
+                                <option value="Lotería de Guainía">Lotería de Guainía</option>
+                                <option value="Lotería de Vaupés">Lotería de Vaupés</option>
+                                <option value="Lotería de Amazonas">Lotería de Amazonas</option>
+                                <option value="Lotería de Putumayo">Lotería de Putumayo</option>
+                                <option value="Lotería de Caquetá">Lotería de Caquetá</option>
+                                <option value="Lotería de Huila">Lotería de Huila</option>
+                                <option value="Lotería de Tolima">Lotería de Tolima</option>
+                                <option value="Lotería de Quindío">Lotería de Quindío</option>
+                                <option value="Lotería de Risaralda">Lotería de Risaralda</option>
+                                <option value="Lotería de Chocó">Lotería de Chocó</option>
+                                <option value="Lotería de San Andrés">Lotería de San Andrés</option>
+                                <option value="Otro">Otro (especificar)</option>
+                            </select>
+                        </div>
+                        <div class="config-item" id="otraLoteriaContainer" style="display: none;">
+                            <label for="otraLoteria">Especificar otra lotería:</label>
+                            <input type="text" id="otraLoteria" placeholder="Nombre de la lotería" maxlength="50">
+                        </div>
+                        <div class="config-item">
+                            <label for="nequiNumber">Número Nequi:</label>
+                            <input type="text" id="nequiNumber" placeholder="3001234567">
+                        </div>
+                        <div class="config-item">
+                            <label for="rifaStatus">Estado de la rifa:</label>
+                            <select id="rifaStatus">
+                                <option value="true">Activa</option>
+                                <option value="false">Inactiva</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Mensajes WhatsApp -->
+            <div class="whatsapp-config-section">
+                <div class="section-header">
+                    <h2>📱 Configuración de Mensajes WhatsApp</h2>
+                    <div class="header-actions">
+                        <button class="save-config-btn" id="saveWhatsAppConfigBtn">💾 Guardar Mensajes</button>
+                        <button class="sync-btn" id="syncWhatsAppBtn">🔄 Sincronizar</button>
+                        <button class="test-btn" id="testWhatsAppBtn">🧪 Probar Mensajes</button>
+                    </div>
+                </div>
+                
+                <div class="config-form">
+                    <div class="config-grid">
+                        <div class="config-item full-width">
+                            <label for="reminderMessage">Mensaje de Recordatorio:</label>
+                            <textarea id="reminderMessage" rows="4" placeholder="Mensaje para recordar pagos pendientes...">🔔 RECORDATORIO DE PAGO
+
+Tienes pendiente el pago de la cuota {nextInstallment}/{totalInstallments}.
+
+📊 Estado de tu plan:
+• Plan: {planType}
+• Cuota actual: {currentInstallment}/{totalInstallments}
+• Monto por cuota: {installmentAmount} COP
+• Restante por pagar: {remainingAmount} COP
+
+💳 Número Nequi: {nequiNumber}
+📱 Por favor, realiza el pago y envía el comprobante.
+
+¡Gracias por tu participación! 🎲</textarea>
+                        </div>
+                        <div class="config-item full-width">
+                            <label for="confirmationMessage">Mensaje de Confirmación:</label>
+                            <textarea id="confirmationMessage" rows="4" placeholder="Mensaje para confirmar pagos recibidos...">✅ CONFIRMACIÓN DE PAGO
+
+Hemos recibido y verificado tu pago correctamente.
+
+📊 Información de tu participación:
+• Número asignado: {participantNumber}
+• Plan: {planType}
+• Monto pagado: {totalAmount} COP
+
+🎲 Tu participación está confirmada para el sorteo.
+¡Mucha suerte! 🍀</textarea>
+                        </div>
+                        <div class="config-item full-width">
+                            <label for="winnerMessage">Mensaje de Ganador:</label>
+                            <textarea id="winnerMessage" rows="4" placeholder="Mensaje para notificar al ganador...">🎉 ¡FELICIDADES {participantName}! 🎉
+
+🏆 ¡ERES EL GANADOR DE LA RIFA! 🏆
+
+Tu número {participantNumber} ha sido seleccionado como ganador.
+
+📞 Te contactaremos pronto para coordinar la entrega del premio.
+
+¡Felicidades! 🎊🎊🎊</textarea>
+                        </div>
+                        <div class="config-item">
+                            <label for="autoNotifications">Notificaciones Automáticas:</label>
+                            <select id="autoNotifications">
+                                <option value="true">Activadas</option>
+                                <option value="false">Desactivadas</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <label for="autoReminders">Recordatorios Automáticos:</label>
+                            <select id="autoReminders">
+                                <option value="false">Desactivados</option>
+                                <option value="true">Activados</option>
+                            </select>
+                        </div>
+                        <div class="config-item">
+                            <label for="reminderDays">Días antes del vencimiento:</label>
+                            <input type="number" id="reminderDays" min="1" max="30" value="3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestión de Participantes -->
+            <div class="participants-management">
+                <div class="section-header">
+                    <h2>👥 Gestión de Participantes</h2>
+                    <div class="header-actions">
+                        <button class="export-btn" id="exportBtn">📄 Exportar PDF</button>
+                        <button class="clear-btn" id="clearAllBtn">🗑️ Limpiar Todo</button>
+                    </div>
+                </div>
+
+                <!-- Búsqueda y Ordenamiento -->
+                <div class="search-section">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre, email o número...">
+                        <button class="clear-search-btn" id="clearSearchBtn" title="Limpiar búsqueda">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="sort-section">
+                        <label for="sortSelect">Ordenar por:</label>
+                        <select id="sortSelect" class="sort-select">
+                            <option value="date-desc" selected>Fecha (más reciente)</option>
+                            <option value="date-asc">Fecha (más antigua)</option>
+                            <option value="name-asc">Nombre (A-Z)</option>
+                            <option value="name-desc">Nombre (Z-A)</option>
+                            <option value="city-asc">Ciudad (A-Z)</option>
+                            <option value="city-desc">Ciudad (Z-A)</option>
+                            <option value="number-asc">Número (0-99)</option>
+                            <option value="number-desc">Número (99-0)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Lista de Participantes -->
+                <div class="participants-grid" id="participantsList">
+                    <!-- Los participantes se cargarán dinámicamente aquí -->
+                    <!-- Ejemplo de tarjeta de participante con botón de abono -->
+                    <!--
+                    <div class="participant-card">
+                        <div class="participant-info">
+                            <span class="participant-name">Nombre Apellido</span>
+                            <span class="participant-number">#23</span>
+                            <span class="participant-email">correo@ejemplo.com</span>
+                        </div>
+                        <div class="participant-actions">
+                            <button class="abono-btn" title="Hacer abono">💸 Hacer abono</button>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>© 2025 Rifa Web - Panel de Administrador | Acceso restringido</p>
+        </footer>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirmar Acción</h3>
+            <p id="modalMessage">¿Estás seguro de que quieres realizar esta acción?</p>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancelBtn">Cancelar</button>
+                <button class="confirm-btn" id="confirmBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edición -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3>✏️ Editar Participante</h3>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editName">Nombre:</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editCity">Ciudad:</label>
+                    <input type="text" id="editCity" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email:</label>
+                    <input type="email" id="editEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Teléfono:</label>
+                    <input type="tel" id="editPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="editNumber">Número:</label>
+                    <input type="number" id="editNumber" min="0" max="99" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancelEditBtn">Cancelar</button>
+                    <button type="submit" class="save-btn">💾 Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="../firebase-config.js"></script>
+    <script type="module" src="../firebase-service.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Participante Registrado</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .info-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        .info-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .payment-plan-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #28a745;
+            border-left: 4px solid #28a745;
+        }
+        .payment-plan-title {
+            color: #155724;
+        }
+        .payment-plan-title i {
+            color: #28a745;
+        }
+        .payment-details {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .payment-row:last-child {
+            border-bottom: none;
+        }
+        .payment-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        .payment-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-complete {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-partial {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .schedule-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-line;
+            line-height: 1.4;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        .footer p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        @media (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .payment-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 Nuevo Participante Registrado</h1>
+            <p>Se ha registrado un nuevo participante en la rifa</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Información del Participante -->
+            <div class="section">
+                <div class="section-title">
+                    <i>👤</i>
+                    Información del Participante
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nombre</div>
+                        <div class="info-value">{{nombre}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Número Seleccionado</div>
+                        <div class="info-value">{{numero}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{email}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">{{telefono}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Ciudad</div>
+                        <div class="info-value">{{ciudad}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Fecha de Registro</div>
+                        <div class="info-value">{{fechaRegistro}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de la Rifa -->
+            <div class="section">
+                <div class="section-title">
+                    <i>🎲</i>
+                    Información de la Rifa
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Título</div>
+                        <div class="info-value">{{tituloRifa}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Monto Total</div>
+                        <div class="info-value">{{monto}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Número Nequi</div>
+                        <div class="info-value">{{numeroNequi}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Fecha del Sorteo</div>
+                        <div class="info-value">{{sorteoDate}}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Lotería</div>
+                        <div class="info-value">{{loteria}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plan de Pago -->
+            <div class="section payment-plan-section">
+                <div class="section-title payment-plan-title">
+                    <i>💳</i>
+                    Plan de Pago - {{planPago}}
+                </div>
+                <div class="payment-details">
+                    <div class="payment-row">
+                        <span class="payment-label">Plan Seleccionado:</span>
+                        <span class="payment-value">{{planPago}}</span>
+                    </div>
+                    <div class="payment-row">
+                        <span class="payment-label">Cuotas Elegidas:</span>
+                        <span class="payment-value highlight">{{cuotasElegidasTexto}}</span>
+                    </div>
+                    <div class="payment-row">
+                        <span class="payment-label">Monto por Cuota:</span>
+                        <span class="payment-value">{{montoCuota}}</span>
+                    </div>
+                    <div class="payment-row">
+                        <span class="payment-label">Monto Total:</span>
+                        <span class="payment-value">{{montoTotal}}</span>
+                    </div>
+                    <div class="payment-row">
+                        <span class="payment-label">Monto Pagado:</span>
+                        <span class="payment-value">{{montoPagado}}</span>
+                    </div>
+                    <div class="payment-row">
+                        <span class="payment-label">Monto Restante:</span>
+                        <span class="payment-value">{{montoRestante}}</span>
+                    </div>
+                    <div class="payment-row">
+                        <span class="payment-label">Estado del Pago:</span>
+                        <span class="payment-value">
+                            <span class="status-badge {{#if (eq estadoPago 'Completo')}}status-complete{{else}}status-partial{{/if}}">
+                                {{estadoPago}}
+                            </span>
+                        </span>
+                    </div>
+                    <div class="payment-row">
+                        <span class="payment-label">Próxima Cuota:</span>
+                        <span class="payment-value">{{proximaCuota}}</span>
+                    </div>
+                </div>
+
+                <!-- Cronograma de Pagos -->
+                <div class="schedule-section">
+                    <strong>📅 Cronograma de Pagos:</strong>
+                    {{cronogramaPagos}}
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>📧 Este email fue generado automáticamente por el sistema de Rifa Web</p>
+            <p>🕒 Fecha de envío: {{fechaRegistro}}</p>
+        </div>
+    </div>
+</body>
+</html> 
